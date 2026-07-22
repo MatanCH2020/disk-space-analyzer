@@ -114,6 +114,30 @@
     </div>
   </section>
 
+  <!-- מסך אודות ומה חדש -->
+  <div id="about-modal" class="modal-overlay" hidden>
+    <div class="modal">
+      <div class="modal-head">
+        <h2>ℹ️ אודות ומה חדש</h2>
+        <button id="about-close" class="modal-close" aria-label="סגור">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="about-version-row">
+          <div>
+            <div class="av-label">הגרסה המותקנת</div>
+            <div id="about-current-version" class="av-value">v…</div>
+          </div>
+          <div class="about-check-wrap">
+            <button id="about-check" class="btn btn-primary">🔄 בדוק עדכונים</button>
+            <span id="about-update-status" class="about-status"></span>
+          </div>
+        </div>
+        <h3 class="whatsnew-title">מה חדש בגרסאות האחרונות</h3>
+        <div id="whatsnew-list" class="whatsnew-list"></div>
+      </div>
+    </div>
+  </div>
+
   <div id="toast" class="toast" hidden></div>
 
   <script src="treemap.js"></script>

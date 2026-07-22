@@ -54,6 +54,12 @@ const el = {
   updateText: document.getElementById('update-text'),
   updateAction: document.getElementById('update-action'),
   updateDismiss: document.getElementById('update-dismiss'),
+  aboutModal: document.getElementById('about-modal'),
+  aboutClose: document.getElementById('about-close'),
+  aboutCurrentVersion: document.getElementById('about-current-version'),
+  aboutCheck: document.getElementById('about-check'),
+  aboutUpdateStatus: document.getElementById('about-update-status'),
+  whatsnewList: document.getElementById('whatsnew-list'),
   flatTitle: document.getElementById('flat-title'),
   flatHint: document.getElementById('flat-hint'),
   flatListHead: document.getElementById('flat-list-head'),
@@ -686,14 +692,66 @@ window.addEventListener('resize', () => {
 });
 
 // ---------- Version & updates ----------
-const updateState = { pendingVersion: null };
+// הערות גרסה ידידותיות (ללא ז'רגון טכני). מוסיפים כאן ערך בכל גרסה חדשה.
+const RELEASE_NOTES = [
+  { v: '1.2.1', date: '22.7.2026', text: 'נוסף מסך "אודות ומה חדש" (זה שאתה רואה עכשיו!) שבו רואים את הגרסה ואת רשימת השינויים בכל עדכון. בנוסף תוקן באנר עדכון שהופיע ריק.' },
+  { v: '1.2.0', date: '22.7.2026', text: 'עכשיו רואים את מספר הגרסה ואפשר להתעדכן בלחיצה מתוך האפליקציה. נוסף אייקון קטן ליד השעון לפתיחה וסגירה מהירה, ותוקנו מחווני הסינון שעבדו הפוך.' },
+  { v: '1.1.0', date: '22.7.2026', text: 'נוספו שני מסכים: "התיקיות הכי גדולות" שמראה מיד את זללני המקום, ו"שינויים" שמשווה לסריקה הקודמת. אפשר גם לשמור סריקות ולחזור אליהן, וקיבלנו אייקון חדש.' },
+  { v: '1.0.0', date: '22.7.2026', text: 'ההשקה הראשונה 🎉 — סריקת כוננים מהירה עם מפת ריבועים צבעונית וכפתור "פתח בסייר" כדי למחוק מה שלא צריך.' }
+];
+
+const updateState = { pendingVersion: null, currentVersion: '' };
 
 async function initVersion() {
   try {
     const v = await window.api.getVersion();
-    el.versionPill.textContent = 'v' + v;
+    updateState.currentVersion = v;
+    el.versionPill.textContent = 'v' + v + ' ⓘ';
+    el.aboutCurrentVersion.textContent = 'v' + v;
+    // הצגה חד-פעמית של "מה חדש" אחרי עדכון גרסה
+    let seen = null;
+    try { seen = localStorage.getItem('lastSeenVersion'); } catch (_) {}
+    if (seen && seen !== v) openAbout();
+    try { localStorage.setItem('lastSeenVersion', v); } catch (_) {}
   } catch (_) { el.versionPill.textContent = ''; }
 }
+
+function renderWhatsNew() {
+  el.whatsnewList.innerHTML = '';
+  RELEASE_NOTES.forEach((r, i) => {
+    const item = document.createElement('div');
+    item.className = 'wn-item' + (r.v === updateState.currentVersion ? ' latest' : '');
+    const head = document.createElement('div');
+    head.className = 'wn-head';
+    const ver = document.createElement('span');
+    ver.className = 'wn-ver';
+    ver.textContent = 'v' + r.v;
+    head.appendChild(ver);
+    if (r.v === updateState.currentVersion) {
+      const nb = document.createElement('span');
+      nb.className = 'wn-badge-new';
+      nb.textContent = '● הגרסה שלך';
+      head.appendChild(nb);
+    }
+    const date = document.createElement('span');
+    date.className = 'wn-date';
+    date.textContent = r.date;
+    head.appendChild(date);
+    const text = document.createElement('div');
+    text.className = 'wn-text';
+    text.textContent = r.text;
+    item.appendChild(head);
+    item.appendChild(text);
+    el.whatsnewList.appendChild(item);
+  });
+}
+
+function openAbout() {
+  renderWhatsNew();
+  el.aboutUpdateStatus.textContent = '';
+  el.aboutModal.hidden = false;
+}
+function closeAbout() { el.aboutModal.hidden = true; }
 
 function showUpdateBanner(text, actionLabel, actionFn) {
   el.updateText.textContent = text;
@@ -708,10 +766,15 @@ function showUpdateBanner(text, actionLabel, actionFn) {
   el.updateBanner.hidden = false;
 }
 
-el.versionPill.addEventListener('click', async () => {
+el.versionPill.addEventListener('click', openAbout);
+el.aboutClose.addEventListener('click', closeAbout);
+el.aboutModal.addEventListener('click', (e) => { if (e.target === el.aboutModal) closeAbout(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !el.aboutModal.hidden) closeAbout(); });
+
+el.aboutCheck.addEventListener('click', async () => {
+  el.aboutUpdateStatus.textContent = 'בודק…';
   const res = await window.api.checkForUpdates();
-  if (res && res.dev) { toast('בדיקת עדכונים זמינה רק בגרסה המותקנת'); return; }
-  toast('בודק עדכונים…');
+  if (res && res.dev) el.aboutUpdateStatus.textContent = 'בדיקת עדכונים זמינה רק בגרסה המותקנת';
 });
 
 el.updateDismiss.addEventListener('click', () => { el.updateBanner.hidden = true; });
@@ -720,23 +783,26 @@ window.api.onUpdateStatus((data) => {
   if (!data) return;
   switch (data.status) {
     case 'checking':
-      toast('בודק עדכונים…');
+      el.aboutUpdateStatus.textContent = 'בודק…';
       break;
     case 'available':
       updateState.pendingVersion = data.version;
       el.versionPill.classList.add('has-update');
+      el.aboutUpdateStatus.textContent = 'גרסה ' + data.version + ' זמינה!';
       showUpdateBanner('🎉 גרסה חדשה זמינה (v' + data.version + ')', '⬇️ הורד עדכון', async () => {
         showUpdateBanner('מוריד עדכון… 0%', null, null);
         await window.api.downloadUpdate();
       });
       break;
     case 'none':
-      toast('אתה כבר בגרסה האחרונה ✓');
+      el.aboutUpdateStatus.textContent = 'אתה כבר בגרסה האחרונה ✓';
       break;
     case 'progress':
+      el.aboutUpdateStatus.textContent = 'מוריד… ' + data.percent + '%';
       showUpdateBanner('מוריד עדכון… ' + data.percent + '%', null, null);
       break;
     case 'downloaded':
+      el.aboutUpdateStatus.textContent = 'העדכון מוכן — התקן והפעל מחדש';
       showUpdateBanner('✅ העדכון (v' + data.version + ') מוכן להתקנה', '🔄 התקן והפעל מחדש', () => {
         window.api.installUpdate();
       });

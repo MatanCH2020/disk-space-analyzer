@@ -1,7 +1,7 @@
 {
   "name": "storage-analyzer",
   "productName": "ניהול אחסון",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "אפליקציית ניתוח אחסון ל-Windows 11 — מאתרת מה תופס מקום בכוננים",
   "main": "main.js",
   "author": "Matan",
