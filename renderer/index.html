@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self';" />
+  <title>ניהול אחסון</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-right">
+      <h1 class="app-title">💾 ניהול אחסון</h1>
+      <span class="app-subtitle">אתר מה תופס לך מקום</span>
+    </div>
+    <div class="header-left">
+      <button id="btn-back-results" class="btn btn-ghost" hidden>↩ חזרה לתוצאות</button>
+      <button id="btn-home" class="btn btn-ghost" hidden>🏠 מסך הבית</button>
+    </div>
+  </header>
+
+  <!-- מסך בית: כוננים -->
+  <section id="view-home" class="view">
+    <div class="view-head">
+      <h2>הכוננים שלך</h2>
+      <button id="btn-refresh-drives" class="btn btn-ghost">↻ רענן</button>
+    </div>
+    <div id="drives-list" class="drives-list"></div>
+  </section>
+
+  <!-- מסך סריקה (התקדמות) -->
+  <section id="view-scanning" class="view" hidden>
+    <div class="scanning-box">
+      <div class="spinner"></div>
+      <h2 id="scan-title">סורק…</h2>
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+      <p id="scan-count" class="scan-count">0 קבצים נסרקו</p>
+      <p id="scan-path" class="scan-path" dir="ltr"></p>
+      <button id="btn-cancel-scan" class="btn btn-danger">בטל סריקה</button>
+    </div>
+  </section>
+
+  <!-- מסך תוצאות -->
+  <section id="view-results" class="view" hidden>
+    <div class="tabs">
+      <button class="tab active" data-mode="browse">🗂️ עיון</button>
+      <button class="tab" data-mode="biggest">📊 התיקיות הכי גדולות</button>
+      <button class="tab" data-mode="changes" id="tab-changes">📈 שינויים</button>
+      <span id="scan-meta" class="scan-meta"></span>
+    </div>
+
+    <!-- מצב עיון -->
+    <div id="mode-browse">
+      <nav id="breadcrumb" class="breadcrumb"></nav>
+
+      <div class="results-toolbar">
+        <div class="current-summary">
+          <span id="current-name" class="current-name"></span>
+          <span id="current-size" class="current-size"></span>
+        </div>
+        <div class="toolbar-controls">
+          <label class="sort-control">מיון:
+            <select id="sort-select">
+              <option value="size-desc">גודל (גדול → קטן)</option>
+              <option value="size-asc">גודל (קטן → גדול)</option>
+              <option value="name-asc">שם (א → ת)</option>
+            </select>
+          </label>
+          <label class="threshold-control">הצג מעל:
+            <strong id="minsize-value">0</strong> GB
+            <input type="range" id="minsize-slider" min="0" max="100" value="0" step="1" />
+          </label>
+          <label class="threshold-control">הדגש מעל:
+            <strong id="threshold-value">40</strong> GB
+            <input type="range" id="threshold-slider" min="1" max="200" value="40" step="1" />
+          </label>
+        </div>
+      </div>
+
+      <div class="results-body">
+        <div class="treemap-panel">
+          <div id="treemap" class="treemap"></div>
+        </div>
+        <div class="list-panel">
+          <div class="list-head">
+            <span>תיקייה / קובץ</span>
+            <span>גודל</span>
+            <span>אחוז</span>
+            <span></span>
+          </div>
+          <div id="items-list" class="items-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- מצב רשימה שטוחה (הכי גדולות / שינויים) -->
+    <div id="mode-flat" hidden>
+      <div class="flat-toolbar">
+        <span id="flat-title" class="flat-title"></span>
+        <span id="flat-hint" class="flat-hint"></span>
+      </div>
+      <div class="flat-list-head" id="flat-list-head"></div>
+      <div id="flat-list" class="items-list flat-list"></div>
+    </div>
+  </section>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="treemap.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

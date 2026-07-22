@@ -1,0 +1,45 @@
+{
+  "name": "storage-analyzer",
+  "productName": "ניהול אחסון",
+  "version": "1.0.0",
+  "description": "אפליקציית ניתוח אחסון ל-Windows 11 — מאתרת מה תופס מקום בכוננים",
+  "main": "main.js",
+  "author": "Matan",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win portable"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.matan.storage-analyzer",
+    "productName": "ניהול אחסון",
+    "files": [
+      "main.js",
+      "preload.js",
+      "scanner-worker.js",
+      "renderer/**/*"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "runAfterFinish": true,
+      "shortcutName": "ניהול אחסון",
+      "artifactName": "disk-space-analyzer-Setup-${version}.exe"
+    },
+    "portable": {
+      "artifactName": "disk-space-analyzer-portable-${version}.exe"
+    }
+  }
+}
