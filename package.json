@@ -1,7 +1,7 @@
 {
   "name": "storage-analyzer",
   "productName": "ניהול אחסון",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "אפליקציית ניתוח אחסון ל-Windows 11 — מאתרת מה תופס מקום בכוננים",
   "main": "main.js",
   "author": "Matan",
@@ -24,6 +24,7 @@
       "renderer/**/*"
     ],
     "win": {
+      "icon": "build/icon.ico",
       "target": [
         "nsis",
         "portable"
@@ -35,6 +36,8 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "runAfterFinish": true,
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
       "shortcutName": "ניהול אחסון",
       "artifactName": "disk-space-analyzer-Setup-${version}.exe"
     },

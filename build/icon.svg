@@ -1,0 +1,26 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="256" y2="256" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#141c2b"/>
+      <stop offset="1" stop-color="#0d1420"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="40" y1="40" x2="140" y2="216" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5b9bff"/>
+      <stop offset="1" stop-color="#3f7fe6"/>
+    </linearGradient>
+    <linearGradient id="green" x1="152" y1="40" x2="216" y2="140" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3ed07a"/>
+      <stop offset="1" stop-color="#2fb469"/>
+    </linearGradient>
+  </defs>
+
+  <!-- rounded background -->
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="url(#bg)"/>
+  <rect x="8.5" y="8.5" width="239" height="239" rx="51.5" stroke="#2b3a52" stroke-opacity="0.6"/>
+
+  <!-- treemap tiles -->
+  <rect x="40"  y="40"  width="104" height="176" rx="12" fill="url(#blue)"/>
+  <rect x="152" y="40"  width="64"  height="100" rx="12" fill="url(#green)"/>
+  <rect x="152" y="148" width="30"  height="68"  rx="10" fill="#ffb020"/>
+  <rect x="190" y="148" width="26"  height="68"  rx="10" fill="#33c9d6"/>
+</svg>

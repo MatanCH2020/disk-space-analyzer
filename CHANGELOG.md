@@ -6,6 +6,13 @@
 [Keep a Changelog](https://keepachangelog.com/), והגרסאות עוקבות אחר
 [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] — 2026-07-22
+### נוסף
+- **אייקון אפליקציה מותאם** (מוטיב מפת ריבועים) — מוצג בקובץ ההתקנה, בקיצור הדרך ובחלון האפליקציה.
+- **דף נחיתה בעברית** (`docs/`) מעוצב RTL, מתפרסם ב-GitHub Pages, עם הסבר, יכולות ופקודת התקנה.
+
+[1.1.0]: https://github.com/MatanCH2020/disk-space-analyzer/releases/tag/v1.1.0
+
 ## [1.0.0] — 2026-07-22
 הגרסה הציבורית הראשונה.
 
