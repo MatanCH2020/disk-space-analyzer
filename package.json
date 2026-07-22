@@ -40,6 +40,10 @@
     },
     "portable": {
       "artifactName": "disk-space-analyzer-portable-${version}.exe"
+    },
+    "publish": {
+      "provider": "github",
+      "releaseType": "release"
     }
   }
 }
