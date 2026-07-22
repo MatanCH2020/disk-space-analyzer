@@ -1,7 +1,7 @@
 {
   "name": "storage-analyzer",
   "productName": "ניהול אחסון",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "אפליקציית ניתוח אחסון ל-Windows 11 — מאתרת מה תופס מקום בכוננים",
   "main": "main.js",
   "author": "Matan",
@@ -9,6 +9,9 @@
   "scripts": {
     "start": "electron .",
     "build": "electron-builder --win"
+  },
+  "dependencies": {
+    "electron-updater": "^6.3.9"
   },
   "devDependencies": {
     "electron": "^33.2.0",
@@ -21,7 +24,8 @@
       "main.js",
       "preload.js",
       "scanner-worker.js",
-      "renderer/**/*"
+      "renderer/**/*",
+      "build/icon.ico"
     ],
     "win": {
       "icon": "build/icon.ico",

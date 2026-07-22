@@ -26,5 +26,16 @@ contextBridge.exposeInMainWorld('api', {
     const listener = (_evt, data) => callback(data);
     ipcRenderer.on('scan-progress', listener);
     return () => ipcRenderer.removeListener('scan-progress', listener);
+  },
+
+  // גרסה ועדכונים
+  getVersion: () => ipcRenderer.invoke('get-version'),
+  checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
+  downloadUpdate: () => ipcRenderer.invoke('download-update'),
+  installUpdate: () => ipcRenderer.invoke('install-update'),
+  onUpdateStatus: (callback) => {
+    const listener = (_evt, data) => callback(data);
+    ipcRenderer.on('update-status', listener);
+    return () => ipcRenderer.removeListener('update-status', listener);
   }
 });

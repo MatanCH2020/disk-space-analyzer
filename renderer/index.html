@@ -12,12 +12,22 @@
     <div class="header-right">
       <h1 class="app-title">💾 ניהול אחסון</h1>
       <span class="app-subtitle">אתר מה תופס לך מקום</span>
+      <button id="version-pill" class="version-pill" title="בדוק עדכונים">v…</button>
     </div>
     <div class="header-left">
       <button id="btn-back-results" class="btn btn-ghost" hidden>↩ חזרה לתוצאות</button>
       <button id="btn-home" class="btn btn-ghost" hidden>🏠 מסך הבית</button>
     </div>
   </header>
+
+  <!-- באנר עדכון -->
+  <div id="update-banner" class="update-banner" hidden>
+    <span id="update-text" class="update-text"></span>
+    <div class="update-actions">
+      <button id="update-action" class="btn btn-sm btn-primary" hidden></button>
+      <button id="update-dismiss" class="btn btn-sm btn-ghost">✕</button>
+    </div>
+  </div>
 
   <!-- מסך בית: כוננים -->
   <section id="view-home" class="view">

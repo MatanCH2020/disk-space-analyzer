@@ -49,6 +49,11 @@ const el = {
   thresholdValue: document.getElementById('threshold-value'),
   treemap: document.getElementById('treemap'),
   itemsList: document.getElementById('items-list'),
+  versionPill: document.getElementById('version-pill'),
+  updateBanner: document.getElementById('update-banner'),
+  updateText: document.getElementById('update-text'),
+  updateAction: document.getElementById('update-action'),
+  updateDismiss: document.getElementById('update-dismiss'),
   flatTitle: document.getElementById('flat-title'),
   flatHint: document.getElementById('flat-hint'),
   flatListHead: document.getElementById('flat-list-head'),
@@ -680,5 +685,68 @@ window.addEventListener('resize', () => {
   }, 150);
 });
 
+// ---------- Version & updates ----------
+const updateState = { pendingVersion: null };
+
+async function initVersion() {
+  try {
+    const v = await window.api.getVersion();
+    el.versionPill.textContent = 'v' + v;
+  } catch (_) { el.versionPill.textContent = ''; }
+}
+
+function showUpdateBanner(text, actionLabel, actionFn) {
+  el.updateText.textContent = text;
+  if (actionLabel) {
+    el.updateAction.textContent = actionLabel;
+    el.updateAction.hidden = false;
+    el.updateAction.onclick = actionFn;
+  } else {
+    el.updateAction.hidden = true;
+    el.updateAction.onclick = null;
+  }
+  el.updateBanner.hidden = false;
+}
+
+el.versionPill.addEventListener('click', async () => {
+  const res = await window.api.checkForUpdates();
+  if (res && res.dev) { toast('בדיקת עדכונים זמינה רק בגרסה המותקנת'); return; }
+  toast('בודק עדכונים…');
+});
+
+el.updateDismiss.addEventListener('click', () => { el.updateBanner.hidden = true; });
+
+window.api.onUpdateStatus((data) => {
+  if (!data) return;
+  switch (data.status) {
+    case 'checking':
+      toast('בודק עדכונים…');
+      break;
+    case 'available':
+      updateState.pendingVersion = data.version;
+      el.versionPill.classList.add('has-update');
+      showUpdateBanner('🎉 גרסה חדשה זמינה (v' + data.version + ')', '⬇️ הורד עדכון', async () => {
+        showUpdateBanner('מוריד עדכון… 0%', null, null);
+        await window.api.downloadUpdate();
+      });
+      break;
+    case 'none':
+      toast('אתה כבר בגרסה האחרונה ✓');
+      break;
+    case 'progress':
+      showUpdateBanner('מוריד עדכון… ' + data.percent + '%', null, null);
+      break;
+    case 'downloaded':
+      showUpdateBanner('✅ העדכון (v' + data.version + ') מוכן להתקנה', '🔄 התקן והפעל מחדש', () => {
+        window.api.installUpdate();
+      });
+      break;
+    case 'error':
+      // שקט — לא מטרידים את המשתמש בכשל בדיקה אוטומטית
+      break;
+  }
+});
+
 // ---------- Init ----------
+initVersion();
 loadDrives();

@@ -3,14 +3,18 @@
 // הגדלת מאגר ה-I/O threads של libuv (משותף לכל התהליך כולל workers) — לפני כל שימוש ב-fs.
 process.env.UV_THREADPOOL_SIZE = process.env.UV_THREADPOOL_SIZE || '24';
 
-const { app, BrowserWindow, ipcMain, shell, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, dialog, Tray, Menu, nativeImage } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { Worker } = require('worker_threads');
 const { execFile } = require('child_process');
+const { autoUpdater } = require('electron-updater');
 
 let mainWindow = null;
 let activeWorker = null;
+let tray = null;
+
+const ICON_PATH = path.join(__dirname, 'build', 'icon.ico');
 
 // ---------- אחסון סריקות שמורות ----------
 const SCANS_DIR = path.join(app.getPath('userData'), 'scans');
@@ -40,7 +44,7 @@ function createWindow() {
     minHeight: 600,
     backgroundColor: '#0f1419',
     title: 'ניהול אחסון',
-    icon: path.join(__dirname, 'build', 'icon.ico'),
+    icon: ICON_PATH,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -52,22 +56,93 @@ function createWindow() {
   mainWindow.removeMenu();
   mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
 
+  // סגירת החלון מסתירה ל-tray (האפליקציה ממשיכה לרוץ); יציאה אמיתית דרך התפריט.
+  mainWindow.on('close', (e) => {
+    if (!app.isQuitting) {
+      e.preventDefault();
+      mainWindow.hide();
+    }
+  });
+
   mainWindow.on('closed', () => {
     mainWindow = null;
     terminateWorker();
   });
 }
 
+function showWindow() {
+  if (!mainWindow) { createWindow(); return; }
+  if (mainWindow.isMinimized()) mainWindow.restore();
+  mainWindow.show();
+  mainWindow.focus();
+}
+
+function createTray() {
+  try {
+    let image = nativeImage.createFromPath(ICON_PATH);
+    if (image.isEmpty()) return;
+    tray = new Tray(image);
+    tray.setToolTip('ניהול אחסון');
+    const menu = Menu.buildFromTemplate([
+      { label: 'הצג את ניהול אחסון', click: showWindow },
+      { label: 'בדוק עדכונים', click: () => { if (app.isPackaged) autoUpdater.checkForUpdates().catch(() => {}); showWindow(); } },
+      { type: 'separator' },
+      { label: 'יציאה', click: () => { app.isQuitting = true; app.quit(); } }
+    ]);
+    tray.setContextMenu(menu);
+    tray.on('click', showWindow);
+    tray.on('double-click', showWindow);
+  } catch (_) {}
+}
+
 app.whenReady().then(() => {
   createWindow();
+  createTray();
+  setupAutoUpdater();
+  if (app.isPackaged) {
+    setTimeout(() => { autoUpdater.checkForUpdates().catch(() => {}); }, 3000);
+  }
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
 
+app.on('before-quit', () => { app.isQuitting = true; });
+
+// לא יוצאים אוטומטית כשהחלון נסגר — נשארים ב-tray עד יציאה מפורשת.
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
+  if (process.platform === 'darwin' && app.isQuitting) app.quit();
 });
+
+// ---------- עדכונים אוטומטיים (electron-updater) ----------
+function sendUpdateStatus(status, data) {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('update-status', Object.assign({ status }, data || {}));
+  }
+}
+
+function setupAutoUpdater() {
+  autoUpdater.autoDownload = false;
+  autoUpdater.autoInstallOnAppQuit = true;
+  autoUpdater.on('checking-for-update', () => sendUpdateStatus('checking'));
+  autoUpdater.on('update-available', (info) => sendUpdateStatus('available', { version: info && info.version }));
+  autoUpdater.on('update-not-available', () => sendUpdateStatus('none'));
+  autoUpdater.on('error', (err) => sendUpdateStatus('error', { message: String(err && err.message ? err.message : err) }));
+  autoUpdater.on('download-progress', (p) => sendUpdateStatus('progress', { percent: Math.round(p.percent || 0) }));
+  autoUpdater.on('update-downloaded', (info) => sendUpdateStatus('downloaded', { version: info && info.version }));
+}
+
+ipcMain.handle('get-version', () => app.getVersion());
+ipcMain.handle('check-for-updates', async () => {
+  if (!app.isPackaged) return { ok: false, dev: true };
+  try { await autoUpdater.checkForUpdates(); return { ok: true }; }
+  catch (e) { return { ok: false, error: String(e && e.message ? e.message : e) }; }
+});
+ipcMain.handle('download-update', async () => {
+  try { await autoUpdater.downloadUpdate(); return { ok: true }; }
+  catch (e) { return { ok: false, error: String(e && e.message ? e.message : e) }; }
+});
+ipcMain.handle('install-update', () => { app.isQuitting = true; autoUpdater.quitAndInstall(); });
 
 // ---------- מניית כוננים דרך PowerShell ----------
 function listDrives() {

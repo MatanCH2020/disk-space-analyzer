@@ -33,6 +33,35 @@ body {
   overflow: hidden;
 }
 
+/* ---------- Version pill + update banner ---------- */
+.version-pill {
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--text-dim);
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: color .2s, border-color .2s;
+  direction: ltr;
+}
+.version-pill:hover { color: var(--text); border-color: var(--accent); }
+.version-pill.has-update { color: var(--good); border-color: var(--good); }
+
+.update-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 20px;
+  background: rgba(53, 196, 106, 0.12);
+  border-block-end: 1px solid rgba(53, 196, 106, 0.35);
+  flex: 0 0 auto;
+}
+.update-text { font-size: 14px; color: var(--text); }
+.update-actions { display: flex; align-items: center; gap: 8px; }
+
 /* ---------- Header ---------- */
 .app-header {
   display: flex;
@@ -221,7 +250,7 @@ body {
   color: var(--text-dim);
 }
 .threshold-control strong { color: var(--warn); }
-#threshold-slider { accent-color: var(--warn); cursor: pointer; }
+#threshold-slider { accent-color: var(--warn); cursor: pointer; direction: ltr; }
 
 /* ---------- Results body ---------- */
 .results-body {
@@ -386,7 +415,7 @@ body {
   padding: 5px 8px;
   cursor: pointer;
 }
-#minsize-slider { accent-color: var(--accent); cursor: pointer; }
+#minsize-slider { accent-color: var(--accent); cursor: pointer; direction: ltr; }
 
 /* ---------- Flat view (biggest / changes) ---------- */
 .flat-toolbar {
