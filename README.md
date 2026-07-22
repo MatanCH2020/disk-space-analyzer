@@ -1,52 +1,117 @@
-<div dir="rtl">
+<div align="center">
 
-# 💾 ניהול אחסון — disk-space-analyzer
+<img src="build/icon-256.png" width="120" alt="ניהול אחסון" />
 
-אפליקציית שולחן-עבודה ל-**Windows 11** שמאתרת מה תופס לך מקום בכוננים — במהירות ובממשק
-ויזואלי פשוט בעברית.
+# ניהול אחסון · disk-space-analyzer
 
-🌐 **דף הבית:** https://matanch2020.github.io/disk-space-analyzer/
- סורקת כונן שלם בכ-30 שניות (מבוססת על `robocopy`), מציגה מפת ריבועים
-(Treemap) ורשימת אחוזים, ומאפשרת לצלול לתיקיות כדי למצוא בקלות משחקים ישנים או תיקיות כבדות
-שאפשר למחוק.
+### 💾 מצא מיד מה תופס לך מקום ב-Windows 11
 
-> **האפליקציה לא מוחקת שום דבר** — היא רק מאתרת ומציגה. לכל פריט יש כפתור "פתח בסייר"
-> והמחיקה נעשית על ידך ידנית ב-Windows.
+סורק אחסון מהיר בממשק עברי — מפת ריבועים ויזואלית שקל לצלול לתוכה, בפקודת התקנה אחת.
 
----
+<br />
 
-## התקנה
+[![Release](https://img.shields.io/github/v/release/MatanCH2020/disk-space-analyzer?style=flat-square&color=4f93ff&label=%D7%92%D7%A8%D7%A1%D7%94)](https://github.com/MatanCH2020/disk-space-analyzer/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/MatanCH2020/disk-space-analyzer/total?style=flat-square&color=35c46a&label=%D7%94%D7%95%D7%A8%D7%93%D7%95%D7%AA)](https://github.com/MatanCH2020/disk-space-analyzer/releases)
+[![License](https://img.shields.io/github/license/MatanCH2020/disk-space-analyzer?style=flat-square&color=9b6dff&label=%D7%A8%D7%99%D7%A9%D7%99%D7%95%D7%9F)](LICENSE)
+[![Platform](https://img.shields.io/badge/Windows-11-0078D6?style=flat-square&logo=windows&logoColor=white)](https://github.com/MatanCH2020/disk-space-analyzer/releases/latest)
 
-### אפשרות 1 — פקודת PowerShell אחת (הכי מהיר)
-פתחו **PowerShell** והדביקו:
+**[⬇️ הורדה ל-Windows](https://github.com/MatanCH2020/disk-space-analyzer/releases/latest) · [🌐 דף הבית](https://matanch2020.github.io/disk-space-analyzer/) · [📦 קוד המקור](https://github.com/MatanCH2020/disk-space-analyzer)**
+
+<br />
+
+<img src="docs/screenshot.png" width="840" alt="צילום מסך של האפליקציה — מפת ריבועים ורשימת תיקיות לפי גודל" />
+
+</div>
+
+<br />
+
+<div align="center">
+
+## ⚡ התקנה בפקודה אחת
+
+פותחים **PowerShell** ומדביקים:
+
+</div>
 
 ```powershell
 irm https://raw.githubusercontent.com/MatanCH2020/disk-space-analyzer/main/install.ps1 | iex
 ```
 
-הפקודה מורידה את גרסת ההתקנה האחרונה ומריצה אותה אוטומטית.
+<div align="center">
 
-### אפשרות 2 — קובץ התקנה (Setup.exe)
-1. היכנסו לעמוד ה-[Releases](https://github.com/MatanCH2020/disk-space-analyzer/releases/latest).
-2. הורידו את `disk-space-analyzer-Setup-x.y.z.exe`.
-3. הריצו והתקינו כמו כל תוכנה. יווצר קיצור בתפריט התחל ובשולחן העבודה.
+הפקודה מורידה את הגרסה האחרונה ומריצה את ההתקנה אוטומטית.
+<br />
+מעדיפים התקנה רגילה? הורידו את **[קובץ ה-Setup](https://github.com/MatanCH2020/disk-space-analyzer/releases/latest)** והריצו כמו כל תוכנה.
 
-> ⚠️ האפליקציה אינה חתומה דיגיטלית, לכן Windows SmartScreen עשוי להציג אזהרה בהפעלה הראשונה.
-> לחצו **"מידע נוסף" → "הפעל בכל זאת"** (More info → Run anyway).
+> ⚠️ האפליקציה אינה חתומה דיגיטלית — בהפעלה הראשונה ייתכן ש-SmartScreen יזהיר.
+> לחצו **"מידע נוסף" → "הפעל בכל זאת"**. הקוד פתוח וניתן לבדיקה כאן.
 
----
+</div>
 
-## יכולות
-- 🔍 **סריקה מהירה** של כונן בודד או כל הכוננים יחד (~30ש' לכונן מלא).
-- 📊 **מפת ריבועים (Treemap)** + רשימת אחוזים, עם צלילה לתת-תיקיות ו-breadcrumb.
-- 💾 **שמירת סריקות** — כל כונן זוכר את הסריקה האחרונה; חזרה לתוצאות בלי לסרוק מחדש.
-- 📈 **התיקיות הכי גדולות** — רשימה שטוחה של התיקיות הכבדות בכונן, עם קפיצה ישירה.
-- 🆚 **השוואה לסריקה קודמת** — רואים מה גדל / התפנה מאז הפעם הקודמת.
-- ↕️ **מיון וסינון** לפי גודל/שם, והדגשת תיקיות מעל סף שנבחר.
+<br />
 
----
+<div align="center">
 
-## פיתוח והרצה מהמקור
+## ✨ יכולות
+
+</div>
+
+<table align="center">
+<tr>
+<td width="33%" valign="top" align="center">
+
+### ⚡ סריקה מהירה
+מנוע robocopy מקבילי סורק כונן מלא בכ-30 שניות — פי 3.5 מהיר מסריקה רגילה.
+
+</td>
+<td width="33%" valign="top" align="center">
+
+### 🗂️ מפת ריבועים
+כל תיקייה כריבוע בגודל יחסי — רואים בשנייה מה גדול, ולוחצים לצלול פנימה.
+
+</td>
+<td width="33%" valign="top" align="center">
+
+### 📊 הכי גדולות
+רשימה שטוחה של התיקיות הכבדות בכל הכונן, עם קפיצה ישירה.
+
+</td>
+</tr>
+<tr>
+<td width="33%" valign="top" align="center">
+
+### 📈 השוואה לסריקה קודמת
+רואים בדיוק מה גדל, מה התפנה ומה חדש מאז הפעם הקודמת.
+
+</td>
+<td width="33%" valign="top" align="center">
+
+### 💾 שמירת סריקות
+כל כונן זוכר את הסריקה האחרונה — חוזרים לתוצאות מיד, בלי לסרוק שוב.
+
+</td>
+<td width="33%" valign="top" align="center">
+
+### 🛡️ בטוח לחלוטין
+האפליקציה **לא מוחקת כלום** — רק מאתרת. "פתח בסייר" לכל פריט, והמחיקה בשליטתך.
+
+</td>
+</tr>
+</table>
+
+<br />
+
+<div align="center">
+
+## 🚀 איך זה עובד
+
+**1.** מתקינים בפקודה אחת &nbsp;·&nbsp; **2.** סורקים כונן (~30 שניות) &nbsp;·&nbsp; **3.** מזהים תיקייה כבדה ולוחצים "פתח בסייר" למחיקה ידנית
+
+<br />
+
+## 🛠️ פיתוח והרצה מהמקור
+
+</div>
 
 דרוש [Node.js](https://nodejs.org/) 18+.
 
@@ -54,27 +119,20 @@ irm https://raw.githubusercontent.com/MatanCH2020/disk-space-analyzer/main/insta
 git clone https://github.com/MatanCH2020/disk-space-analyzer.git
 cd disk-space-analyzer
 npm install
-npm start
+npm start          # הרצה לפיתוח
+npm run build      # בניית Setup.exe + portable לתיקיית dist/
 ```
 
-### בניית קובץ התקנה מקומית
-```bash
-npm run build
-```
-התוצרים ייווצרו בתיקיית `dist/` (קובץ Setup.exe + גרסה portable).
+<div align="center">
 
----
+**איך זה בנוי:** Electron · מנוע סריקה מבוסס `robocopy /MT` ב-worker נפרד · Treemap עצמאי (אלגוריתם squarified) ללא תלויות חיצוניות.
 
-## איך זה עובד
-- **Electron** — תהליך ראשי (`main.js`) לחלון, IPC ומניית כוננים; ממשק ב-`renderer/`.
-- **מנוע הסריקה** (`scanner-worker.js`) רץ ב-`worker_thread` נפרד ומריץ את `robocopy` במצב
-  רשימה (`/L /E /BYTES /MT:32`) — סריקה מקבילית שקוראת גדלים בפעולה אחת, הרבה יותר מהר מ-`stat`
-  פר קובץ. הפלט מפוענח לעץ תיקיות עם צבירת גדלים.
-- **Treemap** מצויר עצמאית (אלגוריתם squarified, `renderer/treemap.js`) ללא תלויות חיצוניות.
+<br />
 
----
+מעוניינים בפירוט? ראו את [יומן השינויים](CHANGELOG.md).
 
-## רישיון
-[MIT](LICENSE)
+<br />
+
+נבנה עבור Windows 11 · קוד פתוח תחת רישיון [MIT](LICENSE)
 
 </div>

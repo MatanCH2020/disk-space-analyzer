@@ -8,10 +8,11 @@
 <meta property="og:title" content="ניהול אחסון — מצא מה תופס מקום ב-Windows" />
 <meta property="og:description" content="סורק אחסון מהיר ל-Windows 11 עם מפת ריבועים ויזואלית. חינמי וקוד פתוח." />
 <meta property="og:type" content="website" />
+<meta property="og:image" content="https://matanch2020.github.io/disk-space-analyzer/screenshot.png" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Crect x='8' y='8' width='240' height='240' rx='52' fill='%23111a29'/%3E%3Crect x='40' y='40' width='104' height='176' rx='12' fill='%234f93ff'/%3E%3Crect x='152' y='40' width='64' height='100' rx='12' fill='%2335c46a'/%3E%3Crect x='152' y='148' width='30' height='68' rx='10' fill='%23ffb020'/%3E%3Crect x='190' y='148' width='26' height='68' rx='10' fill='%2333c9d6'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
 <style>
   :root {
     --bg: #0b111c;
@@ -32,9 +33,8 @@
     --pink: #ff7ab6;
     --purple: #9b6dff;
     --radius: 16px;
-    --radius-sm: 10px;
     --maxw: 1120px;
-    --shadow: 0 20px 50px -20px rgba(0,0,0,.7);
+    --shadow: 0 30px 80px -30px rgba(0,0,0,.8);
     --ring: 0 0 0 3px rgba(79,147,255,.35);
   }
 
@@ -52,16 +52,14 @@
     overflow-x: hidden;
   }
 
-  /* radial glow background */
   body::before {
     content: "";
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background:
-      radial-gradient(1100px 600px at 80% -8%, rgba(79,147,255,.16), transparent 60%),
-      radial-gradient(900px 500px at 10% 0%, rgba(53,196,106,.10), transparent 55%);
-    pointer-events: none;
-    z-index: 0;
+      radial-gradient(1200px 640px at 50% -10%, rgba(79,147,255,.18), transparent 60%),
+      radial-gradient(900px 500px at 12% 4%, rgba(53,196,106,.10), transparent 55%),
+      radial-gradient(800px 500px at 88% 6%, rgba(51,201,214,.08), transparent 55%);
+    pointer-events: none; z-index: 0;
   }
 
   a { color: inherit; text-decoration: none; }
@@ -69,119 +67,125 @@
 
   /* ---------- Buttons ---------- */
   .btn {
-    display: inline-flex; align-items: center; gap: 10px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
     font-family: inherit; font-size: 16px; font-weight: 600;
-    padding: 13px 22px; border-radius: 12px; cursor: pointer;
+    padding: 13px 24px; border-radius: 12px; cursor: pointer;
     border: 1px solid transparent; transition: transform .15s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
     white-space: nowrap;
   }
   .btn:focus-visible { outline: none; box-shadow: var(--ring); }
   .btn-primary { background: linear-gradient(180deg, var(--green), var(--green-2)); color: #05130a; }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -8px rgba(53,196,106,.6); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 26px -8px rgba(53,196,106,.6); }
   .btn-ghost { background: var(--surface-2); color: var(--text); border-color: var(--border); }
   .btn-ghost:hover { transform: translateY(-2px); border-color: var(--blue); }
+  .btn-sm { padding: 9px 16px; font-size: 14px; }
   .btn svg { width: 20px; height: 20px; }
 
-  /* ---------- Header ---------- */
+  /* ---------- Header (balanced 3-zone) ---------- */
   header {
     position: sticky; top: 0; z-index: 50;
     backdrop-filter: blur(12px);
     background: rgba(11,17,28,.72);
     border-bottom: 1px solid var(--border-soft);
   }
-  .nav { display: flex; align-items: center; justify-content: space-between; height: 66px; }
-  .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 18px; }
+  .nav { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 72px; }
+  .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 18px; justify-self: start; }
   .brand .logo { width: 34px; height: 34px; border-radius: 9px; box-shadow: 0 4px 14px -4px rgba(79,147,255,.6); }
-  .nav-links { display: flex; align-items: center; gap: 8px; }
-  .nav-links a { color: var(--text-dim); padding: 8px 14px; border-radius: 9px; font-size: 15px; font-weight: 500; transition: color .2s, background .2s; }
+  .nav-links { display: flex; align-items: center; gap: 6px; justify-self: center; }
+  .nav-links a { color: var(--text-dim); padding: 8px 15px; border-radius: 9px; font-size: 15px; font-weight: 500; transition: color .2s, background .2s; }
   .nav-links a:hover { color: var(--text); background: var(--surface); }
-  .nav-links a.gh { color: var(--text); }
-  @media (max-width: 760px) { .nav-links .hide-sm { display: none; } }
+  .nav-cta { justify-self: end; display: flex; }
+  @media (max-width: 820px) {
+    .nav { grid-template-columns: auto 1fr; }
+    .nav-links { display: none; }
+    .nav-cta { justify-self: end; }
+  }
 
-  /* ---------- Hero ---------- */
-  .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; padding: 72px 0 40px; }
-  @media (max-width: 940px) { .hero { grid-template-columns: 1fr; gap: 40px; padding-top: 48px; } }
+  /* ---------- Hero (centered) ---------- */
+  .hero { text-align: center; padding: 84px 0 20px; display: flex; flex-direction: column; align-items: center; }
+  @media (max-width: 720px) { .hero { padding-top: 52px; } }
 
   .badge {
     display: inline-flex; align-items: center; gap: 8px;
     background: rgba(79,147,255,.12); border: 1px solid rgba(79,147,255,.3);
-    color: #a9c8ff; padding: 6px 14px; border-radius: 999px; font-size: 13px; font-weight: 500; margin-bottom: 22px;
+    color: #a9c8ff; padding: 7px 16px; border-radius: 999px; font-size: 13px; font-weight: 500; margin-bottom: 26px;
   }
   .badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); }
 
-  h1 { font-size: clamp(34px, 5vw, 54px); line-height: 1.12; margin: 0 0 18px; font-weight: 800; letter-spacing: -.5px; }
+  h1 { font-size: clamp(36px, 6vw, 62px); line-height: 1.1; margin: 0 0 20px; font-weight: 800; letter-spacing: -1px; max-width: 15ch; }
   h1 .grad { background: linear-gradient(120deg, var(--blue), var(--teal)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .lead { font-size: clamp(16px, 2vw, 19px); color: var(--text-dim); margin: 0 0 30px; max-width: 34ch; }
+  .lead { font-size: clamp(17px, 2.2vw, 21px); color: var(--text-dim); margin: 0 auto 32px; max-width: 56ch; }
 
-  .cta-row { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 26px; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-bottom: 22px; }
 
   /* install command box */
   .cmd {
     display: flex; align-items: center; gap: 12px;
     background: #060a12; border: 1px solid var(--border);
     border-radius: 12px; padding: 12px 14px; direction: ltr; text-align: left;
-    max-width: 520px;
+    width: 100%; max-width: 600px; margin: 0 auto;
   }
   .cmd code {
     font-family: "SFMono-Regular", ui-monospace, "Cascadia Code", Consolas, monospace;
-    font-size: 13.5px; color: #cbe0ff; overflow-x: auto; white-space: nowrap; flex: 1;
-    scrollbar-width: thin;
+    font-size: 13.5px; color: #cbe0ff; overflow-x: auto; white-space: nowrap; flex: 1; scrollbar-width: thin;
   }
   .cmd .prompt { color: var(--green); user-select: none; }
   .copy-btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 6px;
     background: var(--surface-2); border: 1px solid var(--border); color: var(--text-dim);
-    border-radius: 8px; padding: 7px 10px; cursor: pointer; font-family: inherit; font-size: 13px;
-    transition: color .2s, border-color .2s, background .2s; flex-shrink: 0;
+    border-radius: 8px; padding: 7px 11px; cursor: pointer; font-family: inherit; font-size: 13px;
+    transition: color .2s, border-color .2s; flex-shrink: 0;
   }
   .copy-btn:hover { color: var(--text); border-color: var(--blue); }
   .copy-btn:focus-visible { outline: none; box-shadow: var(--ring); }
   .copy-btn svg { width: 15px; height: 15px; }
-  .cmd-hint { font-size: 12.5px; color: var(--text-mute); margin-top: 10px; }
+  .cmd-hint { font-size: 13px; color: var(--text-mute); margin-top: 12px; }
 
-  /* ---------- App mockup ---------- */
-  .mock {
-    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-    box-shadow: var(--shadow); overflow: hidden; transform: perspective(1400px) rotateY(4deg);
-    transition: transform .5s ease;
+  /* ---------- App mockup (large, centered) ---------- */
+  .hero-visual { width: 100%; max-width: 1000px; margin: 56px auto 0; position: relative; }
+  .hero-visual::after {
+    content: ""; position: absolute; inset: auto 8% -30px 8%; height: 60px;
+    background: radial-gradient(60% 100% at 50% 0%, rgba(79,147,255,.35), transparent 70%);
+    filter: blur(30px); z-index: -1;
   }
-  @media (prefers-reduced-motion: reduce) { .mock { transform: none; } }
-  .mock:hover { transform: perspective(1400px) rotateY(0deg); }
-  .mock-bar { display: flex; align-items: center; gap: 8px; padding: 11px 14px; background: var(--bg-2); border-bottom: 1px solid var(--border-soft); }
-  .mock-bar .dots { display: flex; gap: 6px; }
-  .mock-bar .dots i { width: 11px; height: 11px; border-radius: 50%; display: block; }
-  .mock-title { margin-inline-start: 8px; font-size: 12.5px; color: var(--text-mute); }
-  .mock-body { padding: 14px; }
-  .mock-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
-  .mock-tabs span { font-size: 12px; padding: 5px 11px; border-radius: 8px; color: var(--text-dim); border: 1px solid transparent; }
+  .mock {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
+    box-shadow: var(--shadow); overflow: hidden; text-align: initial;
+  }
+  .mock-bar { display: flex; align-items: center; gap: 8px; padding: 14px 18px; background: var(--bg-2); border-bottom: 1px solid var(--border-soft); }
+  .mock-bar .dots { display: flex; gap: 7px; }
+  .mock-bar .dots i { width: 12px; height: 12px; border-radius: 50%; display: block; }
+  .mock-title { margin-inline-start: 10px; font-size: 14px; color: var(--text-mute); font-weight: 500; }
+  .mock-body { padding: 20px; }
+  .mock-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .mock-tabs span { font-size: 14px; padding: 7px 15px; border-radius: 9px; color: var(--text-dim); border: 1px solid transparent; }
   .mock-tabs span.on { background: var(--blue-soft); border-color: var(--blue); color: #fff; }
-  .mock-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 12px; }
-  @media (max-width: 460px) { .mock-grid { grid-template-columns: 1fr; } }
+  .mock-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 18px; }
+  @media (max-width: 560px) { .mock-grid { grid-template-columns: 1fr; } .treemap { height: 260px !important; } }
 
-  .treemap { display: flex; gap: 6px; height: 210px; }
-  .tm-col { display: flex; flex-direction: column; gap: 6px; }
-  .tile { border-radius: 8px; padding: 9px 10px; color: #fff; font-size: 12px; font-weight: 600; display: flex; flex-direction: column; justify-content: flex-start; overflow: hidden; }
-  .tile small { font-weight: 400; opacity: .9; font-size: 11px; }
+  .treemap { display: flex; gap: 8px; height: 380px; }
+  .tm-col { display: flex; flex-direction: column; gap: 8px; }
+  .tile { border-radius: 10px; padding: 13px 14px; color: #fff; font-size: 15px; font-weight: 700; display: flex; flex-direction: column; gap: 3px; overflow: hidden; }
+  .tile small { font-weight: 500; opacity: .92; font-size: 13px; }
   .tile.blue { background: linear-gradient(160deg, #5b9bff, #3f7fe6); }
   .tile.green { background: linear-gradient(160deg, #3ed07a, #2fb469); }
   .tile.orange { background: linear-gradient(160deg, #ffbe45, #f59e0b); color: #3a2600; }
   .tile.teal { background: linear-gradient(160deg, #45d4e0, #23b5c4); color: #04252a; }
   .tile.purple { background: linear-gradient(160deg, #a984ff, #8258f0); }
 
-  .mock-list { display: flex; flex-direction: column; gap: 9px; }
-  .row { }
-  .row .rt { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
-  .row .rt .nm { color: var(--text); }
+  .mock-list { display: flex; flex-direction: column; gap: 15px; padding-top: 4px; }
+  .row .rt { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 7px; }
+  .row .rt .nm { color: var(--text); font-weight: 500; }
   .row .rt .sz { color: var(--text-dim); font-variant-numeric: tabular-nums; }
-  .bar { height: 7px; background: #0c1422; border-radius: 5px; overflow: hidden; }
-  .bar > span { display: block; height: 100%; border-radius: 5px; }
+  .bar { height: 9px; background: #0c1422; border-radius: 6px; overflow: hidden; }
+  .bar > span { display: block; height: 100%; border-radius: 6px; }
 
   /* ---------- Sections ---------- */
-  section { padding: 64px 0; position: relative; z-index: 1; }
-  .sec-head { text-align: center; max-width: 600px; margin: 0 auto 44px; }
-  .sec-head h2 { font-size: clamp(26px, 3.4vw, 36px); margin: 0 0 12px; font-weight: 800; letter-spacing: -.4px; }
+  section { padding: 72px 0; position: relative; z-index: 1; }
+  .sec-head { text-align: center; max-width: 620px; margin: 0 auto 48px; }
+  .sec-head h2 { font-size: clamp(28px, 3.6vw, 38px); margin: 0 0 12px; font-weight: 800; letter-spacing: -.5px; }
   .sec-head p { color: var(--text-dim); margin: 0; font-size: 17px; }
-  .eyebrow { color: var(--blue); font-weight: 600; font-size: 14px; letter-spacing: .5px; margin: 0 0 10px; }
+  .eyebrow { color: var(--blue); font-weight: 700; font-size: 14px; letter-spacing: .6px; margin: 0 0 10px; }
 
   /* features */
   .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
@@ -189,57 +193,57 @@
   @media (max-width: 560px) { .features { grid-template-columns: 1fr; } }
   .card {
     background: linear-gradient(180deg, var(--surface), #111a29);
-    border: 1px solid var(--border-soft); border-radius: var(--radius); padding: 24px;
+    border: 1px solid var(--border-soft); border-radius: var(--radius); padding: 26px;
     transition: transform .2s ease, border-color .2s ease;
   }
   .card:hover { transform: translateY(-4px); border-color: var(--border); }
-  .ic { width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; margin-bottom: 16px; }
-  .ic svg { width: 24px; height: 24px; stroke-width: 2; }
+  .ic { width: 48px; height: 48px; border-radius: 13px; display: grid; place-items: center; margin-bottom: 16px; }
+  .ic svg { width: 25px; height: 25px; stroke-width: 2; }
   .ic.b { background: rgba(79,147,255,.14); color: var(--blue); }
   .ic.g { background: rgba(53,196,106,.14); color: var(--green); }
   .ic.o { background: rgba(255,176,32,.14); color: var(--orange); }
   .ic.t { background: rgba(51,201,214,.14); color: var(--teal); }
   .ic.p { background: rgba(155,109,255,.14); color: var(--purple); }
   .ic.k { background: rgba(255,122,182,.14); color: var(--pink); }
-  .card h3 { margin: 0 0 8px; font-size: 18px; font-weight: 700; }
+  .card h3 { margin: 0 0 8px; font-size: 19px; font-weight: 700; }
   .card p { margin: 0; color: var(--text-dim); font-size: 15px; }
 
   /* how it works */
   .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
   @media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
-  .step { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius); padding: 26px; position: relative; }
+  .step { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius); padding: 28px; text-align: center; }
   .step .num {
-    width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center;
-    font-weight: 800; font-size: 18px; background: rgba(79,147,255,.14); color: var(--blue); margin-bottom: 16px;
+    width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; margin: 0 auto 16px;
+    font-weight: 800; font-size: 19px; background: rgba(79,147,255,.14); color: var(--blue);
   }
-  .step h3 { margin: 0 0 8px; font-size: 18px; }
+  .step h3 { margin: 0 0 8px; font-size: 19px; }
   .step p { margin: 0; color: var(--text-dim); font-size: 15px; }
   .step code { direction: ltr; display: inline-block; background: #060a12; border: 1px solid var(--border); color: #cbe0ff; padding: 2px 8px; border-radius: 6px; font-size: 12.5px; font-family: ui-monospace, Consolas, monospace; }
 
   /* install section */
-  .install { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 8px; }
+  .install { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
   @media (max-width: 760px) { .install { grid-template-columns: 1fr; } }
-  .inst-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; }
-  .inst-card h3 { margin: 0 0 6px; display: flex; align-items: center; gap: 10px; font-size: 19px; }
+  .inst-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; text-align: center; }
+  .inst-card h3 { margin: 0 0 6px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 20px; }
   .inst-card h3 svg { width: 22px; height: 22px; }
-  .inst-card .sub { color: var(--text-dim); font-size: 14px; margin: 0 0 18px; }
+  .inst-card .sub { color: var(--text-dim); font-size: 14px; margin: 0 0 20px; }
   .inst-card.rec { border-color: rgba(53,196,106,.4); box-shadow: 0 0 0 1px rgba(53,196,106,.12) inset; }
-  .tagpill { font-size: 12px; font-weight: 600; color: var(--green); background: rgba(53,196,106,.14); padding: 3px 10px; border-radius: 999px; }
+  .tagpill { font-size: 12px; font-weight: 700; color: var(--green); background: rgba(53,196,106,.14); padding: 3px 10px; border-radius: 999px; }
   .note {
-    display: flex; gap: 12px; align-items: flex-start; margin-top: 26px;
-    background: rgba(255,176,32,.08); border: 1px solid rgba(255,176,32,.28); border-radius: 12px; padding: 14px 16px;
+    display: flex; gap: 12px; align-items: flex-start; margin-top: 24px; text-align: start;
+    background: rgba(255,176,32,.08); border: 1px solid rgba(255,176,32,.28); border-radius: 12px; padding: 15px 18px;
+    max-width: 760px; margin-inline: auto;
   }
   .note svg { width: 20px; height: 20px; color: var(--orange); flex-shrink: 0; margin-top: 2px; }
   .note p { margin: 0; font-size: 14px; color: #e7d3ac; }
   .note strong { color: #ffcf72; }
 
   /* footer */
-  footer { border-top: 1px solid var(--border-soft); padding: 40px 0; position: relative; z-index: 1; }
-  .foot { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
-  .foot .brand { font-size: 16px; }
-  .foot .links { display: flex; gap: 18px; color: var(--text-dim); font-size: 14px; }
+  footer { border-top: 1px solid var(--border-soft); padding: 44px 0; position: relative; z-index: 1; }
+  .foot { display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center; }
+  .foot .links { display: flex; gap: 20px; color: var(--text-dim); font-size: 14px; }
   .foot .links a:hover { color: var(--text); }
-  .foot .made { color: var(--text-mute); font-size: 13px; width: 100%; text-align: center; margin-top: 8px; }
+  .foot .made { color: var(--text-mute); font-size: 13px; }
 
   .toast {
     position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%) translateY(20px);
@@ -265,11 +269,14 @@
       <span>ניהול אחסון</span>
     </a>
     <nav class="nav-links">
-      <a class="hide-sm" href="#features">יכולות</a>
-      <a class="hide-sm" href="#how">איך זה עובד</a>
+      <a href="#features">יכולות</a>
+      <a href="#how">איך זה עובד</a>
       <a href="#install">התקנה</a>
-      <a class="gh" href="https://github.com/MatanCH2020/disk-space-analyzer" target="_blank" rel="noopener">GitHub ↗</a>
+      <a href="https://github.com/MatanCH2020/disk-space-analyzer" target="_blank" rel="noopener">GitHub ↗</a>
     </nav>
+    <div class="nav-cta">
+      <a class="btn btn-primary btn-sm" href="https://github.com/MatanCH2020/disk-space-analyzer/releases/latest" target="_blank" rel="noopener">הורדה</a>
+    </div>
   </div>
 </header>
 
@@ -277,58 +284,60 @@
   <!-- HERO -->
   <div class="wrap">
     <div class="hero">
-      <div class="hero-text">
-        <span class="badge"><span class="dot"></span> חינמי · קוד פתוח · Windows 11</span>
-        <h1>גילית שנגמר לך מקום?<br><span class="grad">מצא מיד מה תופס אותו.</span></h1>
-        <p class="lead">אפליקציית שולחן-עבודה שסורקת את הכוננים שלך בשניות ומראה בדיוק איפה נעלם המקום — במפת ריבועים ויזואלית שקל לצלול לתוכה.</p>
+      <span class="badge"><span class="dot"></span> חינמי · קוד פתוח · Windows 11</span>
+      <h1>גילית שנגמר מקום?<br><span class="grad">מצא מיד מה תופס אותו.</span></h1>
+      <p class="lead">אפליקציית שולחן-עבודה שסורקת את הכוננים שלך בשניות ומראה בדיוק איפה נעלם המקום — במפת ריבועים ויזואלית שקל לצלול לתוכה.</p>
 
-        <div class="cta-row">
-          <a class="btn btn-primary" href="https://github.com/MatanCH2020/disk-space-analyzer/releases/latest" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            הורדה ל-Windows
-          </a>
-          <a class="btn btn-ghost" href="https://github.com/MatanCH2020/disk-space-analyzer" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.37-3.37-1.37-.46-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.4 9.4 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.93-2.35 4.79-4.58 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.6.69.49A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/></svg>
-            קוד המקור
-          </a>
-        </div>
-
-        <div class="cmd" aria-label="פקודת התקנה">
-          <span class="prompt">PS&gt;</span>
-          <code id="cmd-text">irm https://raw.githubusercontent.com/MatanCH2020/disk-space-analyzer/main/install.ps1 | iex</code>
-          <button class="copy-btn" id="copy-hero" aria-label="העתק את פקודת ההתקנה">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            העתק
-          </button>
-        </div>
-        <p class="cmd-hint">הדביקו ב-PowerShell — מוריד ומריץ את ההתקנה אוטומטית.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://github.com/MatanCH2020/disk-space-analyzer/releases/latest" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          הורדה ל-Windows
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/MatanCH2020/disk-space-analyzer" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.37-3.37-1.37-.46-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.4 9.4 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.93-2.35 4.79-4.58 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.6.69.49A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/></svg>
+          קוד המקור
+        </a>
       </div>
 
-      <!-- MOCKUP -->
-      <div class="mock" role="img" aria-label="תצוגה של ממשק האפליקציה: מפת ריבועים ורשימת תיקיות לפי גודל">
-        <div class="mock-bar">
-          <span class="dots"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span>
-          <span class="mock-title">ניהול אחסון — ‏C:‏ (1.8TB)</span>
-        </div>
-        <div class="mock-body">
-          <div class="mock-tabs"><span class="on">עיון</span><span>הכי גדולות</span><span>שינויים</span></div>
-          <div class="mock-grid">
-            <div class="treemap">
-              <div class="tile blue" style="flex:2.4">Games <small>612 GB</small></div>
-              <div class="tm-col" style="flex:1.6">
-                <div class="tile green" style="flex:2">Users <small>388 GB</small></div>
-                <div style="display:flex; gap:6px; flex:1.2">
-                  <div class="tile orange" style="flex:1.3">Program Files <small>141GB</small></div>
-                  <div class="tile teal" style="flex:1">Windows <small>96GB</small></div>
+      <div class="cmd" aria-label="פקודת התקנה">
+        <span class="prompt">PS&gt;</span>
+        <code>irm https://raw.githubusercontent.com/MatanCH2020/disk-space-analyzer/main/install.ps1 | iex</code>
+        <button class="copy-btn" id="copy-hero" aria-label="העתק את פקודת ההתקנה">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          העתק
+        </button>
+      </div>
+      <p class="cmd-hint">הדביקו ב-PowerShell — מוריד ומריץ את ההתקנה אוטומטית.</p>
+
+      <!-- LARGE MOCKUP -->
+      <div class="hero-visual">
+        <div class="mock" role="img" aria-label="תצוגה של ממשק האפליקציה: מפת ריבועים ורשימת תיקיות לפי גודל">
+          <div class="mock-bar">
+            <span class="dots"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span>
+            <span class="mock-title">ניהול אחסון — ‏C:‏ (1.8TB · 1.46TB בשימוש)</span>
+          </div>
+          <div class="mock-body">
+            <div class="mock-tabs"><span class="on">עיון</span><span>התיקיות הכי גדולות</span><span>שינויים</span></div>
+            <div class="mock-grid">
+              <div class="treemap">
+                <div class="tile blue" style="flex:2.4">Games<small>612 GB · 41%</small></div>
+                <div class="tm-col" style="flex:1.7">
+                  <div class="tile green" style="flex:2">Users<small>388 GB · 26%</small></div>
+                  <div style="display:flex; gap:8px; flex:1.25">
+                    <div class="tile orange" style="flex:1.4">Program Files<small>141 GB</small></div>
+                    <div class="tile teal" style="flex:1">Windows<small>96 GB</small></div>
+                  </div>
+                  <div class="tile purple" style="flex:.7">ProgramData<small>44 GB</small></div>
                 </div>
               </div>
-            </div>
-            <div class="mock-list">
-              <div class="row"><div class="rt"><span class="nm">📁 Games</span><span class="sz">612 GB · 41%</span></div><div class="bar"><span style="width:100%;background:#4f93ff"></span></div></div>
-              <div class="row"><div class="rt"><span class="nm">📁 Users</span><span class="sz">388 GB · 26%</span></div><div class="bar"><span style="width:63%;background:#35c46a"></span></div></div>
-              <div class="row"><div class="rt"><span class="nm">📁 Program Files</span><span class="sz">141 GB · 9%</span></div><div class="bar"><span style="width:23%;background:#ffb020"></span></div></div>
-              <div class="row"><div class="rt"><span class="nm">📁 Windows</span><span class="sz">96 GB · 6%</span></div><div class="bar"><span style="width:16%;background:#33c9d6"></span></div></div>
-              <div class="row"><div class="rt"><span class="nm">📁 ProgramData</span><span class="sz">44 GB · 3%</span></div><div class="bar"><span style="width:8%;background:#9b6dff"></span></div></div>
+              <div class="mock-list">
+                <div class="row"><div class="rt"><span class="nm">📁 Games</span><span class="sz">612 GB · 41%</span></div><div class="bar"><span style="width:100%;background:#4f93ff"></span></div></div>
+                <div class="row"><div class="rt"><span class="nm">📁 Users</span><span class="sz">388 GB · 26%</span></div><div class="bar"><span style="width:63%;background:#35c46a"></span></div></div>
+                <div class="row"><div class="rt"><span class="nm">📁 Program Files</span><span class="sz">141 GB · 9%</span></div><div class="bar"><span style="width:23%;background:#ffb020"></span></div></div>
+                <div class="row"><div class="rt"><span class="nm">📁 Windows</span><span class="sz">96 GB · 6%</span></div><div class="bar"><span style="width:16%;background:#33c9d6"></span></div></div>
+                <div class="row"><div class="rt"><span class="nm">📁 ProgramData</span><span class="sz">44 GB · 3%</span></div><div class="bar"><span style="width:8%;background:#9b6dff"></span></div></div>
+                <div class="row"><div class="rt"><span class="nm">📁 Temp</span><span class="sz">28 GB · 2%</span></div><div class="bar"><span style="width:5%;background:#ff7ab6"></span></div></div>
+              </div>
             </div>
           </div>
         </div>
@@ -380,7 +389,7 @@
   </section>
 
   <!-- HOW IT WORKS -->
-  <section id="how" style="padding-top:20px">
+  <section id="how" style="padding-top:12px">
     <div class="wrap">
       <div class="sec-head">
         <p class="eyebrow">שלושה צעדים</p>
@@ -435,7 +444,7 @@
             קובץ התקנה
           </h3>
           <p class="sub">מעדיפים התקנה רגילה? הורידו את ה-Setup.</p>
-          <a class="btn btn-ghost" href="https://github.com/MatanCH2020/disk-space-analyzer/releases/latest" target="_blank" rel="noopener" style="margin-top:4px">
+          <a class="btn btn-ghost" href="https://github.com/MatanCH2020/disk-space-analyzer/releases/latest" target="_blank" rel="noopener">
             הורדת ‎Setup.exe‎ מ-GitHub
           </a>
         </div>
